@@ -1,0 +1,118 @@
+---
+title: "Program Notebook 5"
+author: "Drew Insley"
+date: "1-20-19"
+output: html_notebook
+---
+
+# Front Matter
+
+```{r message=FALSE, warning=FALSE}
+# clean the enviornment
+rm(list = ls())
+
+# load packages
+library(mdsr)
+library(googlesheets)
+library(tidyr)
+library(babynames)
+library(mosaicData)
+
+# user-defined functions here (if any)
+
+# load data
+data("babynames")
+data("HELPrct")
+data("BP_wide")
+```
+
+
+# Chapter Notes
+
+## Section 5.1
+
+### Sec 5.1.1
+
+```{r results = 'hide'}
+# p. 91
+hiv_key <-
+  "14nH2oKdgDMlgjtLsYM98kxyVMVa5XTkUUkuF0ZrIDgM"
+hiv <-
+  gs_key(hiv_key, lookup = FALSE) %>%
+  gs_read(ws = "Data", range = cell_limits(c(1,1), c(276, 34)))
+```
+
+```{r}
+# p. 91
+names(hiv)[1] <-
+  "Country"
+
+hiv %>%
+  filter(Country %in% c("United States", "France", "South Africa")) %>%
+  select(Country, `1979`, `1989`, `1999`, `2009`)
+```
+
+```{r}
+# p. 92
+hiv_long <-
+  hiv %>%
+  gather(key = Year, value = hiv_rate, -Country)
+
+hiv_long %>%
+  filter(Country %in% c("United States", "France", "South Africa")) %>%
+  filter(Year %in% c(1979, 1989, 1999, 2009))
+```
+
+### Sec 5.1.2
+
+```{r}
+# p. 94
+popular_names <-
+  babynames %>%
+  group_by(sex, name) %>%
+  summarise(total_births = sum(n)) %>%
+  arrange(desc(total_births))
+
+popular_names
+```
+
+```{r}
+# p. 98
+help(HELPrct)
+```
+
+## Section 5.2
+
+### Sec 5.2.1
+
+### Sec 5.2.2
+
+### Sec 5.2.3
+
+### Sec 5.2.4
+
+```{r}
+# p. 101
+babynames %>%
+  filter(name == "Sue") %>%
+  group_by(name, sex) %>%
+  summarise(total = sum(n))
+```
+
+```{r}
+# p. 102
+babynames %>%
+  filter(name == "Robin") %>%
+  group_by(name, sex) %>%
+  summarise(total = sum(n))
+```
+
+```{r}
+# p. 102
+babynames %>%
+  filter(name %in% c("Sue", "Robin", "Leslie")) %>%
+  group_by(name, sex) %>%
+  summarise(total = sum(n)) %>%
+  spread(key = sex, value = total, fill = 0)
+```
+
